@@ -1,49 +1,72 @@
-#https://learn.adafruit.com/mcp3008-spi-adc/python-circuitpython
-#Created with help from above website.
+
 
 #Libraries
-import time
-import busio
-import digitalio
-import board
-import adafruit_mcp3xxx.mcp3008 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
-
-#Files
-from enviro_test import run_bme 
 
 import RPi.GPIO as GPIO
+#Filesimport board
+from enviro_test import run_environ
+from co2_sensor import run_co2​
+2
+​
+3
+#Libraries
+4
+​
+5
+import RPi.GPIO as GPIO
+6
+#Filesimport board
+7
+from enviro_test import run_environ
+8
+from co2_sensor import run_co2
+9
+​
+10
+config = {
+11
+    'select_co2': False
+12
+}
+13
+​
+14
+GPIO.setmode(GPIO.BCM)
+15
+​
+16
+​
+17
+if config['select_co2']:
+18
+    run_co2()
+19
+#Set Select pins to run_bme ead from CO2 censor.
+20
+else:
+21
+    #Select BME
+22
+    run_environ()
+23
+​
+24
+​
+25
+
 
 config = {
-    'select_co2': True
+    'select_co2': False
 }
 
 GPIO.setmode(GPIO.BCM)
 
 
 if config['select_co2']:
-#Set Select pins to read from CO2 censor.
-    GPIO.setup(7, GPIO.OUT)
-    GPIO.output(7, config['select_co2'])
-    GPIO.setup(8, GPIO.OUT)
-    GPIO.output(8, False)
-    spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-#board.D24 = 0import run_bme 
-    cs = digitalio.DigitalInOut(board.D5)
-    mcp = MCP.MCP3008(spi, cs)
-    channel = AnalogIn(mcp, MCP.P0)
-    while True:
-        print('Raw ADC Value: ', channel.value)
-        print('ADC Voltage: ' + str(channel.voltage) + 'V')
-        time.sleep(1)
-
+    run_co2()
+#Set Select pins to run_bme ead from CO2 censor.
 else:
     #Select BME
-    GPIO.setup(7, GPIO.OUT)
-    GPIO.output(7, False)
-    GPIO.setup(8, GPIO.OUT)
-    GPIO.output(8, True)
-    #Run Bme
-    run_bme()
+    run_environ()
 
 
